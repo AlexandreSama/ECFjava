@@ -6,7 +6,7 @@ public class Client extends Societe{
     private long chiffreAffaire;
     private int nbrEmploye;
 
-    public Client(Adresse adresse, String adresseMail, String commentaire, String raisonSociale, String telephone, long chiffreAffaire, int nbrEmploye) {
+    public Client(Adresse adresse, String adresseMail, String commentaire, String raisonSociale, String telephone, long chiffreAffaire, int nbrEmploye) throws ECFException{
         super(adresse, adresseMail, commentaire, compteurIdentifiant++, raisonSociale, telephone); // Génération de l'identifiant
         setChiffreAffaire(chiffreAffaire);
         setNbrEmploye(nbrEmploye);
@@ -16,7 +16,7 @@ public class Client extends Societe{
         return chiffreAffaire;
     }
 
-    public void setChiffreAffaire(long chiffreAffaire) {
+    public void setChiffreAffaire(long chiffreAffaire) throws ECFException{
         if(chiffreAffaire > 200){
             this.chiffreAffaire = chiffreAffaire;
         }else{
@@ -28,7 +28,7 @@ public class Client extends Societe{
         return nbrEmploye;
     }
 
-    public void setNbrEmploye(int nbrEmploye) {
+    public void setNbrEmploye(int nbrEmploye) throws ECFException{
         if(nbrEmploye > 0){
             this.nbrEmploye = nbrEmploye;
         }else{
