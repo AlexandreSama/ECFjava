@@ -18,7 +18,11 @@ public class Client extends Societe{
     }
 
     public void setChiffreAffaire(long chiffreAffaire) {
-        this.chiffreAffaire = chiffreAffaire;
+        if(chiffreAffaire > 200){
+            this.chiffreAffaire = chiffreAffaire;
+        }else{
+            throw new ECFException("Le chiffre d'affaire doit être strictement supérieur a 200 ");
+        }
     }
 
     public int getNbrEmploye() {
@@ -26,6 +30,10 @@ public class Client extends Societe{
     }
 
     public void setNbrEmploye(int nbrEmploye) {
-        this.nbrEmploye = nbrEmploye;
+        if(nbrEmploye > 0){
+            this.nbrEmploye = nbrEmploye;
+        }else{
+            throw new ECFException("Le nombre d'employé doit être strictement supérieur a 0");
+        }
     }
 }
