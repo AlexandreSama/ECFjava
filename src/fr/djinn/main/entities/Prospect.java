@@ -12,7 +12,6 @@ public class Prospect extends Societe{
         super(adresse, adresseMail, commentaire, compteurIdentifiant++, raisonSociale, telephone); // Génération de l'identifiant
         setDateProspection(dateProspection);
         setEstInteresse(estInteresse);
-        GestionProspect.getProspects().add(this);
     }
 
     public LocalDate getDateProspection() {

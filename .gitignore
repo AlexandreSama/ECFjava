@@ -28,3 +28,4 @@ bin/
 ### Mac OS ###
 .DS_Store
 /src/fr/djinn/resources/
+/log/debug.log

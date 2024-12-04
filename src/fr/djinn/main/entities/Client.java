@@ -10,7 +10,6 @@ public class Client extends Societe{
         super(adresse, adresseMail, commentaire, compteurIdentifiant++, raisonSociale, telephone); // Génération de l'identifiant
         setChiffreAffaire(chiffreAffaire);
         setNbrEmploye(nbrEmploye);
-        GestionClient.getClients().add(this);
     }
 
     public long getChiffreAffaire() {
