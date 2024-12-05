@@ -1,49 +1,62 @@
 package fr.djinn.main.views;
 
-import fr.djinn.main.entities.*;
+import fr.djinn.main.entities.Client;
+import fr.djinn.main.entities.GestionClient;
+import fr.djinn.main.entities.GestionProspect;
+import fr.djinn.main.entities.Prospect;
 import fr.djinn.main.utils.ActionType;
 import fr.djinn.main.utils.EntityType;
+import static fr.djinn.main.utils.ECFLogger.LOGGER;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
+/**
+ * Vue principale de l'application permettant de gérer les entités (Clients ou Prospects).
+ * Permet de naviguer entre les différentes actions (CRUD) sur les entités.
+ */
 public class Accueil extends JFrame {
     private JPanel contentPane;
     private JButton buttonQuitter;
     private JPanel firstPanel;
     private JPanel crudPanel;
     private JPanel choosePanel;
+    private JLabel crudPanelTitleLabel;
     private JLabel firstPanelTitleLabel;
+    private JLabel choosePanelTitleLabel;
+
     private JButton clientButton;
     private JButton prospectButton;
-    private JLabel crudPanelTitleLabel;
     private JButton createButton;
     private JButton updateButton;
     private JButton deleteButton;
     private JButton readButton;
-    private JLabel choosePanelTitleLabel;
-    private JComboBox selectSocieteComboBox;
+    private JComboBox<String> selectSocieteComboBox;
     private JButton validerButton;
     private JButton retourButton;
 
     private EntityType entityType;
     private ActionType actionType;
-    private Window thisWindow; // Référence à la fenêtre actuelle
 
+    /**
+     * Constructeur de la classe `Accueil`.
+     * Initialise les composants graphiques et configure les écouteurs d'événements.
+     */
     public Accueil() {
         initComponents();
         listeners();
-
     }
 
+    /**
+     * Initialise les composants graphiques de la fenêtre.
+     */
     private void initComponents() {
         setContentPane(contentPane);
         setSize(900, 600);
-        thisWindow = this;
-
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 onCancel();
@@ -55,73 +68,21 @@ public class Accueil extends JFrame {
         choosePanel.setVisible(false);
     }
 
-    private void listeners(){
+    /**
+     * Configure les écouteurs d'événements pour les composants graphiques.
+     */
+    private void listeners() {
         buttonQuitter.addActionListener(e -> onCancel());
 
-        clientButton.addActionListener(e -> {
-            entityType = EntityType.CLIENT;
-            updateCrudPanelTexts("client", "clients");
-            retourButton.setVisible(true);
-            crudPanel.setVisible(true);
-            crudPanelTitleLabel.setText("Que souhaitez-vous faire avec les clients ?");
-        });
+        clientButton.addActionListener(e -> handleEntitySelection(EntityType.CLIENT, "clients"));
 
-        prospectButton.addActionListener(e -> {
-            entityType = EntityType.PROSPECT;
-            updateCrudPanelTexts("prospect", "prospects");
-            retourButton.setVisible(true);
-            crudPanel.setVisible(true);
-            crudPanelTitleLabel.setText("Que souhaitez-vous faire avec les prospects ?");
-        });
+        prospectButton.addActionListener(e -> handleEntitySelection(EntityType.PROSPECT, "prospects"));
 
-        updateButton.addActionListener(e -> {
-            actionType = ActionType.UPDATE;
-            prepareUpdateOrDelete(entityType, "Quel société voulez-vous mettre a jour ?");
-        });
+        updateButton.addActionListener(e -> handleActionSelection(ActionType.UPDATE, "Quelle société voulez-vous mettre à jour ?"));
 
-        deleteButton.addActionListener(e -> {
-            actionType = ActionType.DELETE;
-            prepareUpdateOrDelete(entityType, "Quel société voulez-vous supprimer ?");
-        });
+        deleteButton.addActionListener(e -> handleActionSelection(ActionType.DELETE, "Quelle société voulez-vous supprimer ?"));
 
-        validerButton.addActionListener(e -> {
-            if(entityType == EntityType.CLIENT){
-                String selectedSociete = (String) selectSocieteComboBox.getSelectedItem();
-                if (selectedSociete == null || selectedSociete.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Veuillez sélectionner une société !.", "Erreur", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                Client selectedClient = GestionClient.getClients().stream()
-                        .filter(client -> client.getRaisonSociale().equals(selectedSociete))
-                        .findFirst().orElse(null);
-
-                if (selectedClient == null) {
-                    JOptionPane.showMessageDialog(null, "Client introuvable.", "Erreur", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                new Crud(selectedClient, actionType).setVisible(true);
-                dispose();
-            }else {
-                String selectedSociete = (String) selectSocieteComboBox.getSelectedItem();
-                if (selectedSociete == null || selectedSociete.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Veuillez sélectionner une société !.", "Erreur", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                Prospect selectedProspect = GestionProspect.getProspects().stream()
-                        .filter(prospect -> prospect.getRaisonSociale().equals(selectedSociete))
-                        .findFirst().orElse(null);
-
-                if(selectedProspect == null) {
-                    JOptionPane.showMessageDialog(null, "Prospect introuvable.", "Erreur", JOptionPane.ERROR_MESSAGE);
-                }
-
-                new Crud(selectedProspect, actionType).setVisible(true);
-                dispose();
-            }
-        });
+        validerButton.addActionListener(e -> handleValidation());
 
         createButton.addActionListener(e -> {
             new Crud(entityType).setVisible(true);
@@ -136,66 +97,145 @@ public class Accueil extends JFrame {
         retourButton.addActionListener(e -> retour());
     }
 
+    /**
+     * Gère la sélection d'une entité (Client ou Prospect).
+     * Configure l'interface pour afficher les actions disponibles pour l'entité choisie.
+     *
+     * @param type Le type d'entité sélectionnée (CLIENT ou PROSPECT).
+     * @param pluralLabel Libellé au pluriel pour l'entité (ex. "clients").
+     */
+    private void handleEntitySelection(EntityType type, String pluralLabel) {
+        entityType = type;
+        crudPanelTitleLabel.setText("Que souhaitez-vous faire avec les " + pluralLabel + " ?");
+        updateCrudPanelTexts(type == EntityType.CLIENT ? "client" : "prospect", pluralLabel);
+        crudPanel.setVisible(true);
+        retourButton.setVisible(true);
+        LOGGER.info("Entité sélectionnée : " + type.name());
+    }
+
+    /**
+     * Gère la sélection d'une action (CREATE, UPDATE ou DELETE) pour l'entité en cours.
+     * Configure l'interface pour afficher la liste des entités à modifier ou supprimer.
+     *
+     * @param action L'action sélectionnée (CREATE, UPDATE ou DELETE).
+     * @param labelText Texte affiché pour guider l'utilisateur.
+     */
+    private void handleActionSelection(ActionType action, String labelText) {
+        actionType = action;
+        populateComboBox(entityType);
+        choosePanel.setVisible(true);
+        retourButton.setVisible(true);
+        LOGGER.info("Action sélectionnée : " + action.name());
+    }
+
+    /**
+     * Remplit la `ComboBox` avec les noms des entités disponibles (Clients ou Prospects).
+     *
+     * @param type Le type d'entité à afficher (CLIENT ou PROSPECT).
+     */
+    private void populateComboBox(EntityType type) {
+        selectSocieteComboBox.removeAllItems();
+        List<?> entities = type == EntityType.CLIENT ? GestionClient.getClients() : GestionProspect.getProspects();
+
+        if (entities.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Aucun " + type.name().toLowerCase() + " enregistré pour l'instant.",
+                    "Liste vide",
+                    JOptionPane.INFORMATION_MESSAGE);
+            choosePanel.setVisible(false);
+            return;
+        }
+
+        entities.forEach(entity -> {
+            if (type == EntityType.CLIENT) {
+                selectSocieteComboBox.addItem(((Client) entity).getRaisonSociale());
+            } else {
+                selectSocieteComboBox.addItem(((Prospect) entity).getRaisonSociale());
+            }
+        });
+
+        LOGGER.info("ComboBox peuplée avec les " + type.name().toLowerCase() + ".");
+    }
+
+    /**
+     * Valide l'entité sélectionnée et ouvre la vue correspondante à l'action choisie.
+     */
+    private void handleValidation() {
+        String selectedSociete = (String) selectSocieteComboBox.getSelectedItem();
+
+        if (selectedSociete == null || selectedSociete.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Veuillez sélectionner une société.",
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (entityType == EntityType.CLIENT) {
+            Client selectedClient = GestionClient.getClients().stream()
+                    .filter(client -> client.getRaisonSociale().equals(selectedSociete))
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedClient == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Client introuvable.",
+                        "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            new Crud(selectedClient, actionType).setVisible(true);
+        } else {
+            Prospect selectedProspect = GestionProspect.getProspects().stream()
+                    .filter(prospect -> prospect.getRaisonSociale().equals(selectedSociete))
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedProspect == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Prospect introuvable.",
+                        "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            new Crud(selectedProspect, actionType).setVisible(true);
+        }
+
+        dispose();
+    }
+
+    /**
+     * Met à jour les libellés des boutons du panneau CRUD en fonction de l'entité sélectionnée.
+     *
+     * @param singular Libellé au singulier pour l'entité (ex. "client").
+     * @param plural Libellé au pluriel pour l'entité (ex. "clients").
+     */
     private void updateCrudPanelTexts(String singular, String plural) {
-        readButton.setText("voir la liste des " + plural);
+        readButton.setText("Voir la liste des " + plural);
         createButton.setText("Ajouter un " + singular);
         updateButton.setText("Modifier un " + singular);
         deleteButton.setText("Supprimer un " + singular);
     }
 
-    private void prepareUpdateOrDelete(EntityType type, String labelText){
-        populateComboBox(type);
-        choosePanelTitleLabel.setText(labelText);
-    }
-
-    private void populateComboBox(EntityType type) {
-        // Supprimer tous les éléments existants dans la ComboBox
-        selectSocieteComboBox.removeAllItems();
-
-        if(type == EntityType.CLIENT){
-            List<Client> clients = GestionClient.getClients();
-            if(clients.isEmpty()){
-                JOptionPane.showMessageDialog(this, "Aucun " + type.name().toLowerCase() +
-                        " enregistré pour l'instant.", "Liste vide", JOptionPane.INFORMATION_MESSAGE);
-                choosePanel.setVisible(false);
-                return;
-            }
-            for(Client client : clients){
-                selectSocieteComboBox.addItem(client.getRaisonSociale());
-            }
-        } else {
-            List<Prospect> prospects = GestionProspect.getProspects();
-            if(prospects.isEmpty()){
-                JOptionPane.showMessageDialog(this, "Aucun " + type.name().toLowerCase() +
-                        " enregistré pour l'instant.", "Liste vide", JOptionPane.INFORMATION_MESSAGE);
-                choosePanel.setVisible(false);
-                return;
-            }
-
-            for(Prospect prospect : prospects){
-                selectSocieteComboBox.addItem(prospect.getRaisonSociale());
-            }
-        }
-        choosePanel.setVisible(true);
-
-    }
-
-    private void retour(){
-        if(choosePanel.isVisible()){
+    /**
+     * Gère le retour à l'écran précédent (CRUD ou choix d'entité).
+     */
+    private void retour() {
+        if (choosePanel.isVisible()) {
             choosePanel.setVisible(false);
-        }else if (crudPanel.isVisible()){
+            crudPanel.setVisible(true);
+        } else if (crudPanel.isVisible()) {
             crudPanel.setVisible(false);
             retourButton.setVisible(false);
         }
     }
 
-    private void onOK() {
-        // add your code here
-        dispose();
-    }
-
+    /**
+     * Ferme la fenêtre actuelle.
+     */
     private void onCancel() {
-        // add your code here if necessary
         dispose();
     }
 }

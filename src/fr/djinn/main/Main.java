@@ -3,22 +3,29 @@ package fr.djinn.main;
 import fr.djinn.main.entities.*;
 import fr.djinn.main.utils.ECFLogger;
 import fr.djinn.main.views.Accueil;
-
 import static fr.djinn.main.utils.ECFLogger.LOGGER;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.logging.Level;
 
+/**
+ * Classe principale de l'application qui initialise les données et lance l'interface graphique.
+ */
 public class Main {
+
+    /**
+     * Point d'entrée principal de l'application.
+     *
+     * @param args Arguments de ligne de commande (non utilisés).
+     */
     public static void main(String[] args) {
 
         try {
             initialiserLogger();
             initialiserSocietesTest();
             new Accueil().setVisible(true);
-        } catch (Exception e){
+        } catch (Exception e) {
             gererErreurCritique(e);
         }
     }
@@ -39,8 +46,11 @@ public class Main {
         }
     }
 
+    /**
+     * Initialise une liste de clients et de prospects à des fins de test.
+     * Les données sont ajoutées directement aux listes gérées par {@link GestionClient} et {@link GestionProspect}.
+     */
     public static void initialiserSocietesTest() {
-        // Ajouter des clients
         GestionClient.getClients().add(new Client(
                 new Adresse("75001", "rue des Lilas", "10", "Paris"),
                 "client1@mail.com",
@@ -78,7 +88,7 @@ public class Main {
                 "Commentaire prospect 1",
                 "Prospect X",
                 "0102030408",
-                LocalDate.of(2023, 1, 15),
+                "23/11/2015",
                 "OUI"
         ));
 
@@ -88,7 +98,7 @@ public class Main {
                 "Commentaire prospect 2",
                 "Prospect Y",
                 "0102030409",
-                LocalDate.of(2022, 7, 10),
+                "14/01/2023",
                 "NON"
         ));
 
@@ -98,7 +108,7 @@ public class Main {
                 "Commentaire prospect 3",
                 "Prospect Z",
                 "0102030410",
-                LocalDate.of(2023, 5, 20),
+                "20/06/2014",
                 "OUI"
         ));
 

@@ -3,17 +3,31 @@ package fr.djinn.main.views;
 import fr.djinn.main.entities.*;
 import fr.djinn.main.utils.ActionType;
 import fr.djinn.main.utils.EntityType;
-import static fr.djinn.main.utils.RegEx.FORMATTER;
+import static fr.djinn.main.utils.ECFLogger.LOGGER;
+import fr.djinn.main.utils.RegEx;
 
 import javax.swing.*;
-import java.awt.event.*;
-import java.time.LocalDate;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Crud extends JFrame {
     private JPanel contentPane;
     private JButton retourButton;
     private JButton quitterButton;
     private JLabel crudPanelTitleLabel;
+    private JLabel identifiantLabel;
+    private JLabel raisonSocialeLabel;
+    private JLabel telephoneLabel;
+    private JLabel emailLabel;
+    private JLabel numeroDeRueLabel;
+    private JLabel nomDeRueLabel;
+    private JLabel codePostalLabel;
+    private JLabel villeLabel;
+    private JLabel caLabel;
+    private JLabel nbrEmployeLabel;
+    private JLabel dateProspectionLabel;
+    private JLabel isInterestedLabel;
+    private JLabel commentaireLabel;
     private JTextField identifiantField;
     private JTextField raisonSocialeField;
     private JTextField telephoneField;
@@ -28,53 +42,51 @@ public class Crud extends JFrame {
     private JTextArea commentaireArea;
     private JTextField dateProspectionField;
     private JTextField isInterestedField;
-    private JLabel identifiantLabel;
-    private JLabel raisonSocialeLabel;
-    private JLabel telephoneLabel;
-    private JLabel emailLabel;
-    private JLabel commentaireLabel;
-    private JLabel numeroDeRueLabel;
-    private JLabel nomDeRueLabel;
-    private JLabel codePostalLabel;
-    private JLabel villeLabel;
-    private JLabel caLabel;
-    private JLabel nbrEmployeLabel;
-    private JLabel dateProspectionLabel;
-    private JLabel isInterestedLabel;
 
     private EntityType entityType;
     private ActionType actionType;
     private Client client;
     private Prospect prospect;
-    private int identifiant;
 
+    /**
+     * Constructeur pour gérer les actions (UPDATE ou DELETE) sur un Client.
+     *
+     * @param p_client Le client à modifier ou supprimer.
+     * @param p_actionType L'action à effectuer (UPDATE ou DELETE).
+     */
     public Crud(Client p_client, ActionType p_actionType) {
         initComponents();
         listeners();
-        actionUpdateOrClient(p_client, p_actionType);
-        actionType = p_actionType;
-        client = p_client;
+        setupCrudPanel(p_client, p_actionType, EntityType.CLIENT);
     }
 
+    /**
+     * Constructeur pour gérer les actions (UPDATE ou DELETE) sur un Prospect.
+     *
+     * @param p_prospect Le prospect à modifier ou supprimer.
+     * @param p_actionType L'action à effectuer (UPDATE ou DELETE).
+     */
     public Crud(Prospect p_prospect, ActionType p_actionType) {
         initComponents();
         listeners();
-        actionUpdateOrDeleteProspect(p_prospect, p_actionType);
-        actionType = p_actionType;
-        prospect = p_prospect;
+        setupCrudPanel(p_prospect, p_actionType, EntityType.PROSPECT);
     }
 
+    /**
+     * Constructeur pour créer une nouvelle entité (Client ou Prospect).
+     *
+     * @param p_entityType Le type d'entité à créer (CLIENT ou PROSPECT).
+     */
     public Crud(EntityType p_entityType) {
         initComponents();
         listeners();
         actionType = ActionType.CREATE;
-        if(p_entityType == EntityType.CLIENT) {
-            actionCreateClient();
-        }else{
-            actionCreateProspect();
-        }
+        setupCreatePanel(p_entityType);
     }
-    
+
+    /**
+     * Initialise les composants graphiques de la vue.
+     */
     private void initComponents() {
         setContentPane(contentPane);
         setSize(900, 600);
@@ -87,260 +99,292 @@ public class Crud extends JFrame {
         });
     }
 
-    private void listeners(){
+    /**
+     * Configure les écouteurs d'événements pour les boutons de l'interface.
+     */
+    private void listeners() {
         retourButton.addActionListener(e -> onOK());
         quitterButton.addActionListener(e -> onCancel());
+
         validerButton.addActionListener(e -> {
             switch (actionType) {
-                case DELETE:
-                    if(client != null) {
-                        deleteClient(client);
-                    } else {
-                        deleteProspect(prospect);
-                    }
-                    break;
-                    case UPDATE:
-                        if(client != null) {
-                            updateClient(client);
-                        } else {
-                            updateProspect(prospect);
-                        }
-                        break;
-                case CREATE:
-                    if(client != null) {
-                        createClient();
-                    }else{
-                        try {
-                            createProspect();
-                        } catch (Exception ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
-                    break;
+                case DELETE -> handleDelete();
+                case UPDATE -> handleUpdate();
+                case CREATE -> handleCreate();
             }
         });
     }
 
-    private void actionUpdateOrClient(Client p_client, ActionType p_actionType) {
+    /**
+     * Configure l'interface en fonction de l'entité et de l'action sélectionnée.
+     *
+     * @param entity L'entité à gérer (Client ou Prospect).
+     * @param p_actionType L'action à effectuer (UPDATE ou DELETE).
+     * @param p_entityType Le type d'entité (CLIENT ou PROSPECT).
+     */
+    private void setupCrudPanel(Object entity, ActionType p_actionType, EntityType p_entityType) {
+        actionType = p_actionType;
+        entityType = p_entityType;
 
-        crudPanelTitleLabel.setText("Modifier ce client ?");
-        validerButton.setText("Enregistrer les modifications");
-        identifiantField.setText(p_client.getIdentifiant().toString());
-        raisonSocialeField.setText(p_client.getRaisonSociale());
-        telephoneField.setText(p_client.getTelephone());
-        emailField.setText(p_client.getAdresseMail());
-        numeroDeRueField.setText(p_client.getAdresse().getNumeroDeRue());
-        nomDeRueField.setText(p_client.getAdresse().getNomDeRue());
-        codePostalField.setText(p_client.getAdresse().getCodePostal());
-        villeField.setText(p_client.getAdresse().getVille());
-        caField.setText(String.valueOf(p_client.getChiffreAffaire()));
-        nbrEmployField.setText(String.valueOf(p_client.getNbrEmploye()));
-        dateProspectionField.setVisible(false);
-        isInterestedField.setVisible(false);
-        dateProspectionLabel.setVisible(false);
-        isInterestedLabel.setVisible(false);
-        if(p_client.getCommentaire() != null){
-            commentaireArea.setText(p_client.getCommentaire());
+        boolean isDelete = (p_actionType == ActionType.DELETE);
+
+        if (p_entityType == EntityType.CLIENT) {
+            crudPanelTitleLabel.setText(isDelete ? "Supprimer ce client ?" : "Modifier ce client ?");
+            validerButton.setText(isDelete ? "Supprimer" : "Enregistrer les modifications");
+            client = (Client) entity;
+            populateFieldsForClient(client);
+            dateProspectionField.setVisible(false);
+            dateProspectionLabel.setVisible(false);
+            isInterestedField.setVisible(false);
+            isInterestedLabel.setVisible(false);
+        } else {
+            crudPanelTitleLabel.setText(isDelete ? "Supprimer ce prospect ?" : "Modifier ce prospect ?");
+            validerButton.setText(isDelete ? "Supprimer" : "Enregistrer les modifications");
+            prospect = (Prospect) entity;
+            populateFieldsForProspect(prospect);
+            caField.setVisible(false);
+            caLabel.setVisible(false);
+            nbrEmployField.setVisible(false);
+            nbrEmployeLabel.setVisible(false);
         }
 
-        if(p_actionType == ActionType.DELETE){
-            crudPanelTitleLabel.setText("Supprimer ce client ?");
-            validerButton.setText("Supprimer ce client");
-            raisonSocialeField.setEditable(false);
-            telephoneField.setEditable(false);
-            emailField.setEditable(false);
-            numeroDeRueField.setEditable(false);
-            nomDeRueField.setEditable(false);
-            codePostalField.setEditable(false);
-            villeField.setEditable(false);
-            caField.setEditable(false);
-            nbrEmployField.setEditable(false);
-            commentaireArea.setEditable(false);
-        }
+        toggleFieldsEditable(!isDelete);
     }
 
-    private void actionUpdateOrDeleteProspect(Prospect p_prospect, ActionType p_actionType) {
+    /**
+     * Configure l'interface pour la création d'une nouvelle entité.
+     *
+     * @param p_entityType Le type d'entité à créer (CLIENT ou PROSPECT).
+     */
+    private void setupCreatePanel(EntityType p_entityType) {
+        entityType = p_entityType;
 
-        crudPanelTitleLabel.setText("Modifier ce prospect ?");
-        validerButton.setText("Enregistrer les modifications");
-        identifiantField.setText(p_prospect.getIdentifiant().toString());
-        raisonSocialeField.setText(p_prospect.getRaisonSociale());
-        telephoneField.setText(p_prospect.getTelephone());
-        emailField.setText(p_prospect.getAdresseMail());
-        numeroDeRueField.setText(p_prospect.getAdresse().getNumeroDeRue());
-        nomDeRueField.setText(p_prospect.getAdresse().getNomDeRue());
-        codePostalField.setText(p_prospect.getAdresse().getCodePostal());
-        villeField.setText(p_prospect.getAdresse().getVille());
-        dateProspectionField.setText(p_prospect.getDateProspection().toString());
-        isInterestedField.setText(p_prospect.getEstInteresse());
-        caField.setVisible(false);
-        caLabel.setVisible(false);
-        nbrEmployField.setVisible(false);
-        nbrEmployeLabel.setVisible(false);
-
-        if(p_prospect.getCommentaire() != null){
-            commentaireArea.setText(p_prospect.getCommentaire());
-        }
-
-        if(p_actionType == ActionType.DELETE){
-            crudPanelTitleLabel.setText("Supprimer ce prospect ?");
-            validerButton.setText("Supprimer ce prospect");
-            raisonSocialeField.setEditable(false);
-            telephoneField.setEditable(false);
-            emailField.setEditable(false);
-            numeroDeRueField.setEditable(false);
-            nomDeRueField.setEditable(false);
-            codePostalField.setEditable(false);
-            villeField.setEditable(false);
-            dateProspectionField.setEditable(false);
-            isInterestedField.setEditable(false);
-            commentaireArea.setEditable(false);
+        if (p_entityType == EntityType.CLIENT) {
+            crudPanelTitleLabel.setText("Créer un nouveau client ?");
+            validerButton.setText("Créer");
+            caField.setVisible(true);
+            caLabel.setVisible(true);
+            nbrEmployField.setVisible(true);
+            nbrEmployeLabel.setVisible(true);
+            dateProspectionField.setVisible(false);
+            dateProspectionLabel.setVisible(false);
+            isInterestedField.setVisible(false);
+            isInterestedLabel.setVisible(false);
+        } else {
+            crudPanelTitleLabel.setText("Créer un nouveau prospect ?");
+            validerButton.setText("Créer");
+            caField.setVisible(false);
+            caLabel.setVisible(false);
+            nbrEmployField.setVisible(false);
+            nbrEmployeLabel.setVisible(false);
+            dateProspectionField.setVisible(true);
+            dateProspectionLabel.setVisible(true);
+            isInterestedField.setVisible(true);
+            isInterestedLabel.setVisible(true);
         }
     }
 
-    private void actionCreateClient(){
-        crudPanelTitleLabel.setText("Ajouter un client ?");
-        validerButton.setText("Ajouter un client");
-        identifiant = Client.getProchainIdentifiant();
-        identifiantField.setText(String.valueOf(identifiant));
-        dateProspectionField.setVisible(false);
-        isInterestedField.setVisible(false);
-        dateProspectionLabel.setVisible(false);
-        isInterestedLabel.setVisible(false);
+    /**
+     * Remplit les champs pour afficher ou modifier un Client.
+     *
+     * @param client Le client dont les données sont affichées.
+     */
+    private void populateFieldsForClient(Client client) {
+        identifiantField.setText(client.getIdentifiant().toString());
+        raisonSocialeField.setText(client.getRaisonSociale());
+        telephoneField.setText(client.getTelephone());
+        emailField.setText(client.getAdresseMail());
+        numeroDeRueField.setText(client.getAdresse().getNumeroDeRue());
+        nomDeRueField.setText(client.getAdresse().getNomDeRue());
+        codePostalField.setText(client.getAdresse().getCodePostal());
+        villeField.setText(client.getAdresse().getVille());
+        caField.setText(String.valueOf(client.getChiffreAffaire()));
+        nbrEmployField.setText(String.valueOf(client.getNbrEmploye()));
+        commentaireArea.setText(client.getCommentaire());
     }
 
-    private void actionCreateProspect(){
-        crudPanelTitleLabel.setText("Ajouter un prospect ?");
-        validerButton.setText("Ajouter un prospect");
-        identifiant = Prospect.getProchainIdentifiant();
-        identifiantField.setText(String.valueOf(identifiant));
-        caField.setVisible(false);
-        nbrEmployField.setVisible(false);
-        caLabel.setVisible(false);
-        nbrEmployeLabel.setVisible(false);
+    /**
+     * Remplit les champs pour afficher ou modifier un Prospect.
+     *
+     * @param prospect Le prospect dont les données sont affichées.
+     */
+    private void populateFieldsForProspect(Prospect prospect) {
+        identifiantField.setText(prospect.getIdentifiant().toString());
+        raisonSocialeField.setText(prospect.getRaisonSociale());
+        telephoneField.setText(prospect.getTelephone());
+        emailField.setText(prospect.getAdresseMail());
+        numeroDeRueField.setText(prospect.getAdresse().getNumeroDeRue());
+        nomDeRueField.setText(prospect.getAdresse().getNomDeRue());
+        codePostalField.setText(prospect.getAdresse().getCodePostal());
+        villeField.setText(prospect.getAdresse().getVille());
+        dateProspectionField.setText(prospect.getDateProspection().format(RegEx.FORMATTER));
+        isInterestedField.setText(prospect.getEstInteresse().name());
+        commentaireArea.setText(prospect.getCommentaire());
     }
 
-    private void createClient() throws ECFException {
+    /**
+     * Active ou désactive les champs en fonction de l'action sélectionnée.
+     *
+     * @param editable Si vrai, les champs sont éditables ; sinon, ils sont verrouillés.
+     */
+    private void toggleFieldsEditable(boolean editable) {
+        raisonSocialeField.setEditable(editable);
+        telephoneField.setEditable(editable);
+        emailField.setEditable(editable);
+        numeroDeRueField.setEditable(editable);
+        nomDeRueField.setEditable(editable);
+        codePostalField.setEditable(editable);
+        villeField.setEditable(editable);
+        caField.setEditable(editable);
+        nbrEmployField.setEditable(editable);
+        dateProspectionField.setEditable(editable);
+        isInterestedField.setEditable(editable);
+        commentaireArea.setEditable(editable);
+    }
+
+    /**
+     * Supprime une entité (Client ou Prospect) en fonction du type spécifié.
+     * Affiche un message de confirmation et enregistre un log de l'opération.
+     */
+    private void handleDelete() {
         try {
-            GestionClient.getClients().add(new Client(
-                    new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()),
-                    emailField.getText(),
-                    commentaireArea.getText(),
-                    raisonSocialeField.getText(),
-                    telephoneField.getText(),
-                    Long.parseLong(caField.getText()),
-                    Integer.parseInt(nbrEmployField.getText())
-            ));
-            JOptionPane.showMessageDialog(null, "Client ajouté !");
-            dispose();
-            new Accueil().setVisible(true);
-        } catch (ECFException ec) {
-            JOptionPane.showMessageDialog(null, ec.getMessage());
-        }
-    }
-
-    private void createProspect() throws Exception {
-        try {
-            GestionProspect.getProspects().add(new Prospect(
-                    new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()),
-                    emailField.getText(),
-                    commentaireArea.getText(),
-                    raisonSocialeField.getText(),
-                    telephoneField.getText(),
-                    LocalDate.parse(dateProspectionField.getText(), FORMATTER),
-                    isInterestedField.getText()
-            ));
-            JOptionPane.showMessageDialog(null, "Prospect ajouté !");
-            dispose();
-            new Accueil().setVisible(true);
-        } catch (ECFException ec) {
-            JOptionPane.showMessageDialog(null, ec.getMessage());
-        }
-    }
-
-    private void deleteClient(Client client) throws ECFException {
-        int confirmation = JOptionPane.showConfirmDialog(
-                null,
-                "Êtes-vous sûr de vouloir supprimer ce client ?",
-                "Confirmation de suppression",
-                JOptionPane.YES_NO_OPTION
-        );
-
-        if (confirmation == JOptionPane.YES_OPTION) {
-            try {
+            if (entityType == EntityType.CLIENT) {
                 GestionClient.getClients().remove(client);
-                JOptionPane.showMessageDialog(null, "Ce client a bien été supprimé");
+                LOGGER.info("Client supprimée : " + (client != null ? client.getRaisonSociale() : prospect.getRaisonSociale()));
+                JOptionPane.showMessageDialog(this, "Client supprimée avec succès !");
                 dispose();
                 new Accueil().setVisible(true);
-            } catch (ECFException ec) {
-                JOptionPane.showMessageDialog(null, ec.getMessage());
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Suppression annulée.");
-        }
-    }
-
-    private void deleteProspect(Prospect prospect) throws ECFException {
-        int confirmation = JOptionPane.showConfirmDialog(
-                null,
-                "Êtes-vous sûr de vouloir supprimer ce prospect ?",
-                "Confirmation de suppression",
-                JOptionPane.YES_NO_OPTION
-        );
-
-        if (confirmation == JOptionPane.YES_OPTION) {
-            try {
+            } else {
                 GestionProspect.getProspects().remove(prospect);
-                JOptionPane.showMessageDialog(null, "Ce prospect a bien été supprimé");
+                LOGGER.info("Prospect supprimée : " + (client != null ? client.getRaisonSociale() : prospect.getRaisonSociale()));
+                JOptionPane.showMessageDialog(this, "Prospect supprimée avec succès !");
                 dispose();
                 new Accueil().setVisible(true);
-            } catch (ECFException ec) {
-                JOptionPane.showMessageDialog(null, ec.getMessage());
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Suppression annulée.");
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
-    private void updateClient(Client client) throws ECFException {
-        try{
-            client.setRaisonSociale(raisonSocialeField.getText());
-            client.setTelephone(telephoneField.getText());
-            client.setAdresseMail(emailField.getText());
-            client.setChiffreAffaire(Long.parseLong(caField.getText()));
-            client.setNbrEmploye(Integer.parseInt(nbrEmployField.getText()));
-            client.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
-            JOptionPane.showMessageDialog(null, "Ce client a bien été mis a jour");
-            dispose();
-            new Accueil().setVisible(true);
-        } catch (ECFException ec) {
-            JOptionPane.showMessageDialog(null, ec.getMessage());
+    /**
+     * Met à jour une entité (Client ou Prospect) avec les données saisies dans le formulaire.
+     * Enregistre les modifications et affiche un message de confirmation.
+     */
+    private void handleUpdate() {
+        try {
+            if (entityType == EntityType.CLIENT) {
+                updateClientFields(client);
+                JOptionPane.showMessageDialog(this, "Client mis à jour avec succès !");
+                LOGGER.info("Client mis à jour : " + (client != null ? client.getRaisonSociale() : prospect.getRaisonSociale()));
+                dispose();
+                new Accueil().setVisible(true);
+            } else {
+                updateProspectFields(prospect);
+                JOptionPane.showMessageDialog(this, "Prospect mis à jour avec succès !");
+                LOGGER.info("Prospect mis à jour : " + (client != null ? client.getRaisonSociale() : prospect.getRaisonSociale()));
+                dispose();
+                new Accueil().setVisible(true);
+            }
+        } catch (ECFException e) {
+            handleException(e);
         }
     }
 
-    private void updateProspect(Prospect prospect) throws ECFException {
-        try{
-            prospect.setRaisonSociale(raisonSocialeField.getText());
-            prospect.setTelephone(telephoneField.getText());
-            prospect.setAdresseMail(emailField.getText());
-            prospect.setDateProspection(LocalDate.parse(dateProspectionField.getText(), FORMATTER));
-            prospect.setEstInteresse(isInterestedField.getText());
-            prospect.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
-            JOptionPane.showMessageDialog(null, "Ce prospect a bien été mis a jour");
-            dispose();
-            new Accueil().setVisible(true);
-        } catch (ECFException ec) {
-            JOptionPane.showMessageDialog(null, ec.getMessage());
+    /**
+     * Crée une nouvelle entité (Client ou Prospect) avec les données saisies dans le formulaire.
+     * Ajoute l'entité à la liste correspondante et affiche un message de confirmation.
+     */
+    private void handleCreate() {
+        try {
+            if (entityType == EntityType.CLIENT) {
+                GestionClient.getClients().add(new Client(
+                        new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()),
+                        emailField.getText(),
+                        commentaireArea.getText(),
+                        raisonSocialeField.getText(),
+                        telephoneField.getText(),
+                        Long.parseLong(caField.getText()),
+                        Integer.parseInt(nbrEmployField.getText())
+                ));
+                JOptionPane.showMessageDialog(this, "Client créée avec succès !");
+                LOGGER.info("Nouveau client créée : " + raisonSocialeField.getText());
+                dispose();
+                new Accueil().setVisible(true);
+            } else {
+                GestionProspect.getProspects().add(new Prospect(
+                        new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()),
+                        emailField.getText(),
+                        commentaireArea.getText(),
+                        raisonSocialeField.getText(),
+                        telephoneField.getText(),
+                        dateProspectionField.getText(),
+                        isInterestedField.getText()
+                ));
+                JOptionPane.showMessageDialog(this, "Prospect créée avec succès !");
+                LOGGER.info("Nouveau prospect créée : " + raisonSocialeField.getText());
+                dispose();
+                new Accueil().setVisible(true);
+            }
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
+    /**
+     * Met à jour les champs d'un Client en fonction des données saisies dans le formulaire.
+     *
+     * @param client Le client à mettre à jour.
+     * @throws ECFException Si une erreur de validation se produit.
+     */
+    private void updateClientFields(Client client) throws ECFException {
+        client.setRaisonSociale(raisonSocialeField.getText());
+        client.setTelephone(telephoneField.getText());
+        client.setAdresseMail(emailField.getText());
+        client.setChiffreAffaire(Long.parseLong(caField.getText()));
+        client.setNbrEmploye(Integer.parseInt(nbrEmployField.getText()));
+        client.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
+    }
+
+    /**
+     * Met à jour les champs d'un Prospect en fonction des données saisies dans le formulaire.
+     *
+     * @param prospect Le prospect à mettre à jour.
+     * @throws ECFException Si une erreur de validation se produit.
+     */
+    private void updateProspectFields(Prospect prospect) throws ECFException {
+        prospect.setRaisonSociale(raisonSocialeField.getText());
+        prospect.setTelephone(telephoneField.getText());
+        prospect.setAdresseMail(emailField.getText());
+        prospect.setDateProspection(dateProspectionField.getText());
+        prospect.setEstInteresse(isInterestedField.getText());
+        prospect.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
+    }
+
+    /**
+     * Gère les exceptions survenues lors des actions CRUD.
+     * Affiche un message d'erreur à l'utilisateur et enregistre un log de l'exception.
+     *
+     * @param e L'exception à gérer.
+     */
+    private void handleException(Exception e) {
+        JOptionPane.showMessageDialog(this, e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+        LOGGER.severe("Erreur : " + e.getMessage());
+    }
+
+    /**
+     * Action effectuée lors du clic sur le bouton "Retour".
+     * Ferme la fenêtre actuelle et retourne à l'accueil.
+     */
     private void onOK() {
-        // add your code here
         dispose();
+        new Accueil().setVisible(true);
     }
 
+    /**
+     * Action effectuée lors de la fermeture de la fenêtre.
+     * Ferme la fenêtre actuelle et retourne à l'accueil.
+     */
     private void onCancel() {
-        // add your code here if necessary
         dispose();
     }
 }
