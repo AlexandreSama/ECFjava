@@ -169,9 +169,9 @@ public abstract class Societe {
      */
     private boolean isRaisonSocialeDuplicate(String raisonSociale) {
         return GestionClient.getClients().stream()
-                .anyMatch(client -> client.getRaisonSociale().equalsIgnoreCase(raisonSociale)) ||
+                .anyMatch(client -> client.getRaisonSociale().equalsIgnoreCase(raisonSociale) && !client.equals(this)) ||
                 GestionProspect.getProspects().stream()
-                        .anyMatch(prospect -> prospect.getRaisonSociale().equalsIgnoreCase(raisonSociale));
+                        .anyMatch(prospect -> prospect.getRaisonSociale().equalsIgnoreCase(raisonSociale) && !prospect.equals(this));
     }
 
     /**

@@ -41,7 +41,7 @@ public class Crud extends JFrame {
     private JButton validerButton;
     private JTextArea commentaireArea;
     private JTextField dateProspectionField;
-    private JTextField isInterestedField;
+    private JComboBox isInterestedComboBox;
 
     private EntityType entityType;
     private ActionType actionType;
@@ -135,7 +135,7 @@ public class Crud extends JFrame {
             populateFieldsForClient(client);
             dateProspectionField.setVisible(false);
             dateProspectionLabel.setVisible(false);
-            isInterestedField.setVisible(false);
+            isInterestedComboBox.setVisible(false);
             isInterestedLabel.setVisible(false);
         } else {
             crudPanelTitleLabel.setText(isDelete ? "Supprimer ce prospect ?" : "Modifier ce prospect ?");
@@ -146,6 +146,8 @@ public class Crud extends JFrame {
             caLabel.setVisible(false);
             nbrEmployField.setVisible(false);
             nbrEmployeLabel.setVisible(false);
+            isInterestedComboBox.setVisible(true);
+            isInterestedComboBox.setSelectedItem(prospect.getEstInteresse());
         }
 
         toggleFieldsEditable(!isDelete);
@@ -160,6 +162,8 @@ public class Crud extends JFrame {
         entityType = p_entityType;
 
         if (p_entityType == EntityType.CLIENT) {
+            int identifiant = Client.generateIdentifiant();
+            identifiantField.setText(String.valueOf(identifiant));
             crudPanelTitleLabel.setText("Créer un nouveau client ?");
             validerButton.setText("Créer");
             caField.setVisible(true);
@@ -168,9 +172,11 @@ public class Crud extends JFrame {
             nbrEmployeLabel.setVisible(true);
             dateProspectionField.setVisible(false);
             dateProspectionLabel.setVisible(false);
-            isInterestedField.setVisible(false);
+            isInterestedComboBox.setVisible(false);
             isInterestedLabel.setVisible(false);
         } else {
+            int identifiant = Prospect.generateIdentifiant();
+            identifiantField.setText(String.valueOf(identifiant));
             crudPanelTitleLabel.setText("Créer un nouveau prospect ?");
             validerButton.setText("Créer");
             caField.setVisible(false);
@@ -179,8 +185,7 @@ public class Crud extends JFrame {
             nbrEmployeLabel.setVisible(false);
             dateProspectionField.setVisible(true);
             dateProspectionLabel.setVisible(true);
-            isInterestedField.setVisible(true);
-            isInterestedLabel.setVisible(true);
+            isInterestedComboBox.setVisible(true);
         }
     }
 
@@ -218,7 +223,7 @@ public class Crud extends JFrame {
         codePostalField.setText(prospect.getAdresse().getCodePostal());
         villeField.setText(prospect.getAdresse().getVille());
         dateProspectionField.setText(prospect.getDateProspection().format(RegEx.FORMATTER));
-        isInterestedField.setText(prospect.getEstInteresse().name());
+        isInterestedComboBox.setSelectedItem(prospect.getEstInteresse());
         commentaireArea.setText(prospect.getCommentaire());
     }
 
@@ -238,7 +243,7 @@ public class Crud extends JFrame {
         caField.setEditable(editable);
         nbrEmployField.setEditable(editable);
         dateProspectionField.setEditable(editable);
-        isInterestedField.setEditable(editable);
+        isInterestedComboBox.setEnabled(editable);
         commentaireArea.setEditable(editable);
     }
 
@@ -248,16 +253,34 @@ public class Crud extends JFrame {
      */
     private void handleDelete() {
         try {
-            if (entityType == EntityType.CLIENT) {
-                GestionClient.getClients().remove(client);
-                LOGGER.info("Client supprimée : " + (client != null ? client.getRaisonSociale() : prospect.getRaisonSociale()));
-                JOptionPane.showMessageDialog(this, "Client supprimée avec succès !");
+            // Demande de confirmation à l'utilisateur
+            int confirmation = JOptionPane.showConfirmDialog(
+                    this,
+                    "Êtes-vous sûr de vouloir supprimer cette entité ?",
+                    "Confirmation de suppression",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            // Si l'utilisateur confirme la suppression
+            if (confirmation == JOptionPane.YES_OPTION) {
+                if (entityType == EntityType.CLIENT) {
+                    GestionClient.getClients().remove(client);
+                    LOGGER.info("Client supprimé : " + client.getRaisonSociale());
+                    JOptionPane.showMessageDialog(this, "Client supprimé avec succès !");
+                } else {
+                    GestionProspect.getProspects().remove(prospect);
+                    LOGGER.info("Prospect supprimé : " + prospect.getRaisonSociale());
+                    JOptionPane.showMessageDialog(this, "Prospect supprimé avec succès !");
+                }
+
+                // Retour à l'accueil après la suppression
                 dispose();
                 new Accueil().setVisible(true);
             } else {
-                GestionProspect.getProspects().remove(prospect);
-                LOGGER.info("Prospect supprimée : " + (client != null ? client.getRaisonSociale() : prospect.getRaisonSociale()));
-                JOptionPane.showMessageDialog(this, "Prospect supprimée avec succès !");
+                // Si l'utilisateur annule la suppression
+                LOGGER.info("Suppression annulée par l'utilisateur.");
+                JOptionPane.showMessageDialog(this, "Suppression annulée.");
                 dispose();
                 new Accueil().setVisible(true);
             }
@@ -265,6 +288,7 @@ public class Crud extends JFrame {
             handleException(e);
         }
     }
+
 
     /**
      * Met à jour une entité (Client ou Prospect) avec les données saisies dans le formulaire.
@@ -306,8 +330,7 @@ public class Crud extends JFrame {
                         Long.parseLong(caField.getText()),
                         Integer.parseInt(nbrEmployField.getText())
                 ));
-                JOptionPane.showMessageDialog(this, "Client créée avec succès !");
-                LOGGER.info("Nouveau client créée : " + raisonSocialeField.getText());
+                JOptionPane.showMessageDialog(this, "Client ajouté avec succès !");
                 dispose();
                 new Accueil().setVisible(true);
             } else {
@@ -318,10 +341,9 @@ public class Crud extends JFrame {
                         raisonSocialeField.getText(),
                         telephoneField.getText(),
                         dateProspectionField.getText(),
-                        isInterestedField.getText()
+                        isInterestedComboBox.getSelectedItem().toString()
                 ));
-                JOptionPane.showMessageDialog(this, "Prospect créée avec succès !");
-                LOGGER.info("Nouveau prospect créée : " + raisonSocialeField.getText());
+                JOptionPane.showMessageDialog(this, "Prospect ajouté avec succès !");
                 dispose();
                 new Accueil().setVisible(true);
             }
@@ -356,7 +378,7 @@ public class Crud extends JFrame {
         prospect.setTelephone(telephoneField.getText());
         prospect.setAdresseMail(emailField.getText());
         prospect.setDateProspection(dateProspectionField.getText());
-        prospect.setEstInteresse(isInterestedField.getText());
+        prospect.setEstInteresse(isInterestedComboBox.getSelectedItem().toString());
         prospect.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
     }
 

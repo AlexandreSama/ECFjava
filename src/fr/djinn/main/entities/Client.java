@@ -81,7 +81,7 @@ public class Client extends Societe {
      *
      * @return Identifiant unique.
      */
-    private static int generateIdentifiant() {
+    public static int generateIdentifiant() {
         return compteurIdentifiant++;
     }
 
