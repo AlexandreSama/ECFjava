@@ -54,7 +54,7 @@ public class Main {
         }
     }
 
-    private static void chargerDonnees() throws IOException {
+    private static void chargerDonnees() {
         GestionClient.loadClientsFromFile();
         GestionProspect.loadProspectsFromFile();
     }

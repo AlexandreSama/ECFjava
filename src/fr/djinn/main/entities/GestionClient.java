@@ -2,6 +2,7 @@ package fr.djinn.main.entities;
 
 import com.google.gson.reflect.TypeToken;
 import fr.djinn.main.utils.JsonUtils;
+import static fr.djinn.main.utils.ECFLogger.LOGGER;
 
 import java.io.File;
 import java.io.FileReader;
@@ -10,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class GestionClient {
@@ -44,7 +46,7 @@ public class GestionClient {
     public static void loadClientsFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists() || file.length() == 0) {
-            System.out.println("Aucun fichier de clients trouvé ou fichier vide. Liste initialisée vide.");
+            LOGGER.log(Level.INFO, "Aucun fichier de clients trouvé ou fichier vide. Liste initialisée vide.");
             return;
         }
 
@@ -55,7 +57,7 @@ public class GestionClient {
             clients.addAll(loadedClients);
             updateCompteurIdentifiant(); // Mise à jour du compteur
         } catch (IOException e) {
-            System.err.println("Erreur lors du chargement des clients : " + e.getMessage());
+            LOGGER.log(Level.INFO,"Erreur lors du chargement des clients : " + e.getMessage());
         }
     }
 
