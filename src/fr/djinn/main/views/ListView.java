@@ -191,10 +191,10 @@ public class ListView extends JFrame {
             }
         });
 
-        listTable.addKeyListener(new java.awt.event.KeyAdapter() {
+        listTable.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(java.awt.event.KeyEvent e) {
-                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_DELETE) {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                     int selectedRow = listTable.getSelectedRow();
 
                     if (selectedRow != -1) {
