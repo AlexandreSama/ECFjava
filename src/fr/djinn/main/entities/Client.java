@@ -85,6 +85,10 @@ public class Client extends Societe {
         return compteurIdentifiant++;
     }
 
+    public static void setCompteurIdentifiant(int value) {
+        compteurIdentifiant = value;
+    }
+
     /**
      * Enregistre une erreur de validation dans le logger.
      *
