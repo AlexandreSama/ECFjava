@@ -9,6 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.util.logging.Level;
+
+import static fr.djinn.main.utils.ECFLogger.LOGGER;
 
 public class JsonUtils {
 
@@ -51,7 +54,7 @@ public class JsonUtils {
 
         if (directory != null && !directory.exists()) {
             if (directory.mkdirs()) {
-                System.out.println("Dossier créé : " + directory.getAbsolutePath());
+                LOGGER.log(Level.INFO,"Dossier créé : " + directory.getAbsolutePath());
             } else {
                 throw new RuntimeException("Échec de la création du dossier : " + directory.getAbsolutePath());
             }

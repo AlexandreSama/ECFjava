@@ -10,7 +10,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import static fr.djinn.main.utils.ECFLogger.LOGGER;
 
 public class GestionProspect {
 
@@ -44,7 +47,7 @@ public class GestionProspect {
     public static void loadProspectsFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists() || file.length() == 0) {
-            System.out.println("Aucun fichier de prospects trouvé ou fichier vide. Liste initialisée vide.");
+            LOGGER.log(Level.INFO,"Aucun fichier de prospects trouvé ou fichier vide. Liste initialisée vide.");
             return;
         }
 
@@ -55,7 +58,7 @@ public class GestionProspect {
             prospects.addAll(loadedProspects);
             updateCompteurIdentifiant(); // Mise à jour du compteur
         } catch (IOException e) {
-            System.err.println("Erreur lors du chargement des prospects : " + e.getMessage());
+            LOGGER.log(Level.INFO, "Erreur lors du chargement des prospects : " + e.getMessage());
         }
     }
 
