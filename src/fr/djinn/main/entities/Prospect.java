@@ -29,4 +29,8 @@ public class Prospect extends Societe{
     public void setEstInteresse(String estInteresse) {
         this.estInteresse = estInteresse;
     }
+
+    public static int getProchainIdentifiant() {
+        return compteurIdentifiant;
+    }
 }

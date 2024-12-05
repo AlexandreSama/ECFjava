@@ -26,6 +26,7 @@ public class Accueil extends JFrame {
     private JLabel choosePanelTitleLabel;
     private JComboBox selectSocieteComboBox;
     private JButton validerButton;
+    private JButton retourButton;
 
     private EntityType entityType;
     private ActionType actionType;
@@ -49,6 +50,7 @@ public class Accueil extends JFrame {
             }
         });
 
+        retourButton.setVisible(false);
         crudPanel.setVisible(false);
         choosePanel.setVisible(false);
     }
@@ -64,7 +66,9 @@ public class Accueil extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 entityType = EntityType.CLIENT;
                 updateCrudPanelTexts("client", "clients");
+                retourButton.setVisible(true);
                 crudPanel.setVisible(true);
+                crudPanelTitleLabel.setText("Que souhaitez-vous faire avec les clients ?");
             }
         });
 
@@ -72,7 +76,9 @@ public class Accueil extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 entityType = EntityType.PROSPECT;
                 updateCrudPanelTexts("prospect", "prospects");
+                retourButton.setVisible(true);
                 crudPanel.setVisible(true);
+                crudPanelTitleLabel.setText("Que souhaitez-vous faire avec les prospects ?");
             }
         });
 
@@ -87,6 +93,57 @@ public class Accueil extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 actionType = ActionType.DELETE;
                 prepareUpdateOrDelete(entityType, "Quel société voulez-vous supprimer ?");
+            }
+        });
+
+        validerButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(entityType == EntityType.CLIENT){
+                    String selectedSociete = (String) selectSocieteComboBox.getSelectedItem();
+                    if (selectedSociete == null || selectedSociete.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Veuillez sélectionner une société !.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    Client selectedClient = GestionClient.getClients().stream()
+                            .filter(client -> client.getRaisonSociale().equals(selectedSociete))
+                            .findFirst().orElse(null);
+
+                    if (selectedClient == null) {
+                        JOptionPane.showMessageDialog(null, "Client introuvable.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    new Crud(selectedClient, actionType).setVisible(true);
+                }else {
+                    String selectedSociete = (String) selectSocieteComboBox.getSelectedItem();
+                    if (selectedSociete == null || selectedSociete.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Veuillez sélectionner une société !.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    Prospect selectedProspect = GestionProspect.getProspects().stream()
+                            .filter(prospect -> prospect.getRaisonSociale().equals(selectedSociete))
+                            .findFirst().orElse(null);
+
+                    if(selectedProspect == null) {
+                        JOptionPane.showMessageDialog(null, "Prospect introuvable.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    new Crud(selectedProspect, actionType).setVisible(true);
+                }
+            }
+        });
+
+        createButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Crud(entityType).setVisible(true);
+            }
+        });
+
+        retourButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                retour();
             }
         });
     }
@@ -133,6 +190,15 @@ public class Accueil extends JFrame {
         }
         choosePanel.setVisible(true);
 
+    }
+
+    private void retour(){
+        if(choosePanel.isVisible()){
+            choosePanel.setVisible(false);
+        }else if (crudPanel.isVisible()){
+            crudPanel.setVisible(false);
+            retourButton.setVisible(false);
+        }
     }
 
     private void onOK() {

@@ -35,4 +35,8 @@ public class Client extends Societe{
             throw new ECFException("Le nombre d'employé doit être strictement supérieur a 0");
         }
     }
+
+    public static int getProchainIdentifiant() {
+        return compteurIdentifiant;
+    }
 }
