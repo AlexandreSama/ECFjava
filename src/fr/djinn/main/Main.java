@@ -23,8 +23,16 @@ public class Main {
 
         try {
             initialiserLogger();
-            initialiserSocietesTest();
+            chargerDonnees();
             new Accueil().setVisible(true);
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    sauvegarderDonnees();
+                } catch (IOException e) {
+                    System.err.println("Erreur lors de la sauvegarde des données : " + e.getMessage());
+                }
+            }));
         } catch (Exception e) {
             gererErreurCritique(e);
         }
@@ -46,73 +54,14 @@ public class Main {
         }
     }
 
-    /**
-     * Initialise une liste de clients et de prospects à des fins de test.
-     * Les données sont ajoutées directement aux listes gérées par {@link GestionClient} et {@link GestionProspect}.
-     */
-    public static void initialiserSocietesTest() {
-        GestionClient.getClients().add(new Client(
-                new Adresse("75001", "rue des Lilas", "10", "Paris"),
-                "client1@mail.com",
-                "Commentaire client 1",
-                "Woods Associates",
-                "0102030405",
-                500000,
-                50
-        ));
+    private static void chargerDonnees() throws IOException {
+        GestionClient.loadClientsFromFile();
+        GestionProspect.loadProspectsFromFile();
+    }
 
-        GestionClient.getClients().add(new Client(
-                new Adresse("69002", "avenue des Champs", "20", "Lyon"),
-                "client2@mail.com",
-                "Commentaire client 2",
-                "IBM",
-                "0102030406",
-                300000,
-                30
-        ));
-
-        GestionClient.getClients().add(new Client(
-                new Adresse("75009", "boulevard Haussmann", "5", "Paris"),
-                "client3@mail.com",
-                "Commentaire client 3",
-                "Swifty Corp",
-                "0102030407",
-                700000,
-                70
-        ));
-
-        // Ajouter des prospects
-        GestionProspect.getProspects().add(new Prospect(
-                new Adresse("75002", "rue de la Paix", "15", "Paris"),
-                "prospect1@mail.com",
-                "Commentaire prospect 1",
-                "Prospect X",
-                "0102030408",
-                "23/11/2015",
-                "OUI"
-        ));
-
-        GestionProspect.getProspects().add(new Prospect(
-                new Adresse("75001", "rue Saint-Honoré", "25", "Paris"),
-                "prospect2@mail.com",
-                "Commentaire prospect 2",
-                "Prospect Y",
-                "0102030409",
-                "14/01/2023",
-                "NON"
-        ));
-
-        GestionProspect.getProspects().add(new Prospect(
-                new Adresse("75008", "avenue de l'Opéra", "30", "Paris"),
-                "prospect3@mail.com",
-                "Commentaire prospect 3",
-                "Prospect Z",
-                "0102030410",
-                "20/06/2014",
-                "OUI"
-        ));
-
-        LOGGER.log(Level.INFO, "Sociétés de test ajoutées : 3 clients, 3 prospects");
+    private static void sauvegarderDonnees() throws IOException {
+        GestionClient.saveClientsToFile();
+        GestionProspect.saveProspectsToFile();
     }
 
     /**

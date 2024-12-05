@@ -29,3 +29,4 @@ bin/
 .DS_Store
 /src/fr/djinn/resources/
 /log/debug.log
+/save/

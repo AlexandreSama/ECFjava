@@ -97,6 +97,10 @@ public class Prospect extends Societe {
         return compteurIdentifiant++;
     }
 
+    public static void setCompteurIdentifiant(int value) {
+        compteurIdentifiant = value;
+    }
+
     /**
      * Enregistre une erreur de validation dans le logger.
      *
