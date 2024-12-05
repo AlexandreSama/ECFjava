@@ -1,14 +1,13 @@
 package fr.djinn.main.views;
 
-import fr.djinn.main.entities.Client;
-import fr.djinn.main.entities.Prospect;
+import fr.djinn.main.entities.*;
 import fr.djinn.main.utils.ActionType;
 import fr.djinn.main.utils.EntityType;
+import static fr.djinn.main.utils.RegEx.FORMATTER;
 
 import javax.swing.*;
-import javax.swing.text.html.parser.Entity;
-import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDate;
 
 public class Crud extends JFrame {
     private JPanel contentPane;
@@ -42,7 +41,6 @@ public class Crud extends JFrame {
     private JLabel nbrEmployeLabel;
     private JLabel dateProspectionLabel;
     private JLabel isInterestedLabel;
-    private Window thisWindow;
 
     private EntityType entityType;
     private ActionType actionType;
@@ -53,15 +51,17 @@ public class Crud extends JFrame {
     public Crud(Client p_client, ActionType p_actionType) {
         initComponents();
         listeners();
-        this.client = p_client;
         actionUpdateOrClient(p_client, p_actionType);
+        actionType = p_actionType;
+        client = p_client;
     }
 
     public Crud(Prospect p_prospect, ActionType p_actionType) {
         initComponents();
         listeners();
-        this.prospect = p_prospect;
         actionUpdateOrDeleteProspect(p_prospect, p_actionType);
+        actionType = p_actionType;
+        prospect = p_prospect;
     }
 
     public Crud(EntityType p_entityType) {
@@ -78,7 +78,6 @@ public class Crud extends JFrame {
     private void initComponents() {
         setContentPane(contentPane);
         setSize(900, 600);
-        thisWindow = this;
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -89,15 +88,31 @@ public class Crud extends JFrame {
     }
 
     private void listeners(){
-        retourButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
-
-        quitterButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
+        retourButton.addActionListener(e -> onOK());
+        quitterButton.addActionListener(e -> onCancel());
+        validerButton.addActionListener(e -> {
+            switch (actionType) {
+                case DELETE:
+                    if(client != null) {
+                        deleteClient(client);
+                    } else {
+                        deleteProspect(prospect);
+                    }
+                    break;
+                    case UPDATE:
+                        if(client != null) {
+                            updateClient(client);
+                        } else {
+                            updateProspect(prospect);
+                        }
+                        break;
+                case CREATE:
+                    if(client != null) {
+                        createClient();
+                    }else{
+                        createProspect();
+                    }
+                    break;
             }
         });
     }
@@ -193,6 +208,97 @@ public class Crud extends JFrame {
         identifiantField.setText(String.valueOf(identifiant));
     }
 
+    private void createClient() throws ECFException {
+        try {
+            GestionClient.getClients().add(new Client(
+                    new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()),
+                    emailField.getText(),
+                    commentaireArea.getText(),
+                    raisonSocialeField.getText(),
+                    telephoneField.getText(),
+                    Long.parseLong(caField.getText()),
+                    Integer.parseInt(nbrEmployField.getText())
+            ));
+            JOptionPane.showMessageDialog(null, "Client ajouté !");
+            dispose();
+            new Accueil().setVisible(true);
+        } catch (ECFException ec) {
+            JOptionPane.showMessageDialog(null, ec.getMessage());
+        }
+    }
+
+    private void createProspect() throws ECFException {
+        try {
+            GestionProspect.getProspects().add(new Prospect(
+                    new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()),
+                    emailField.getText(),
+                    commentaireArea.getText(),
+                    raisonSocialeField.getText(),
+                    telephoneField.getText(),
+                    LocalDate.parse(dateProspectionField.getText(), FORMATTER),
+                    isInterestedField.getText()
+            ));
+            JOptionPane.showMessageDialog(null, "Prospect ajouté !");
+            dispose();
+            new Accueil().setVisible(true);
+        } catch (ECFException ec) {
+            JOptionPane.showMessageDialog(null, ec.getMessage());
+        }
+    }
+
+    private void deleteClient(Client client) throws ECFException {
+        try{
+            GestionClient.getClients().remove(client);
+            JOptionPane.showMessageDialog(null, "Ce client a bien été supprimé");
+            dispose();
+            new Accueil().setVisible(true);
+        } catch (ECFException ec) {
+            JOptionPane.showMessageDialog(null, ec.getMessage());
+        }
+    }
+
+    private void deleteProspect(Prospect prospect) throws ECFException {
+        try{
+            GestionProspect.getProspects().remove(prospect);
+            JOptionPane.showMessageDialog(null, "Ce prospect a bien été supprimé");
+            dispose();
+            new Accueil().setVisible(true);
+        } catch (ECFException ec) {
+            JOptionPane.showMessageDialog(null, ec.getMessage());
+        }
+    }
+
+    private void updateClient(Client client) throws ECFException {
+        try{
+            client.setRaisonSociale(raisonSocialeField.getText());
+            client.setTelephone(telephoneField.getText());
+            client.setAdresseMail(emailField.getText());
+            client.setChiffreAffaire(Long.parseLong(caField.getText()));
+            client.setNbrEmploye(Integer.parseInt(nbrEmployField.getText()));
+            client.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
+            JOptionPane.showMessageDialog(null, "Ce client a bien été mis a jour");
+            dispose();
+            new Accueil().setVisible(true);
+        } catch (ECFException ec) {
+            JOptionPane.showMessageDialog(null, ec.getMessage());
+        }
+    }
+
+    private void updateProspect(Prospect prospect) throws ECFException {
+        try{
+            prospect.setRaisonSociale(raisonSocialeField.getText());
+            prospect.setTelephone(telephoneField.getText());
+            prospect.setAdresseMail(emailField.getText());
+            prospect.setDateProspection(LocalDate.parse(dateProspectionField.getText(), FORMATTER));
+            prospect.setEstInteresse(isInterestedField.getText());
+            prospect.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
+            JOptionPane.showMessageDialog(null, "Ce prospect a bien été mis a jour");
+            dispose();
+            new Accueil().setVisible(true);
+        } catch (ECFException ec) {
+            JOptionPane.showMessageDialog(null, ec.getMessage());
+        }
+    }
 
     private void onOK() {
         // add your code here
