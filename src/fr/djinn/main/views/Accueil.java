@@ -128,6 +128,11 @@ public class Accueil extends JFrame {
             dispose();
         });
 
+        readButton.addActionListener(e -> {
+            new ListView(entityType).setVisible(true);
+            dispose();
+        });
+
         retourButton.addActionListener(e -> retour());
     }
 

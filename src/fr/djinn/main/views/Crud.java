@@ -67,7 +67,7 @@ public class Crud extends JFrame {
     public Crud(EntityType p_entityType) {
         initComponents();
         listeners();
-
+        actionType = ActionType.CREATE;
         if(p_entityType == EntityType.CLIENT) {
             actionCreateClient();
         }else{
@@ -110,7 +110,11 @@ public class Crud extends JFrame {
                     if(client != null) {
                         createClient();
                     }else{
-                        createProspect();
+                        try {
+                            createProspect();
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                     break;
             }
@@ -188,8 +192,8 @@ public class Crud extends JFrame {
             nomDeRueField.setEditable(false);
             codePostalField.setEditable(false);
             villeField.setEditable(false);
-            caField.setEditable(false);
-            nbrEmployField.setEditable(false);
+            dateProspectionField.setEditable(false);
+            isInterestedField.setEditable(false);
             commentaireArea.setEditable(false);
         }
     }
@@ -199,6 +203,10 @@ public class Crud extends JFrame {
         validerButton.setText("Ajouter un client");
         identifiant = Client.getProchainIdentifiant();
         identifiantField.setText(String.valueOf(identifiant));
+        dateProspectionField.setVisible(false);
+        isInterestedField.setVisible(false);
+        dateProspectionLabel.setVisible(false);
+        isInterestedLabel.setVisible(false);
     }
 
     private void actionCreateProspect(){
@@ -206,6 +214,10 @@ public class Crud extends JFrame {
         validerButton.setText("Ajouter un prospect");
         identifiant = Prospect.getProchainIdentifiant();
         identifiantField.setText(String.valueOf(identifiant));
+        caField.setVisible(false);
+        nbrEmployField.setVisible(false);
+        caLabel.setVisible(false);
+        nbrEmployeLabel.setVisible(false);
     }
 
     private void createClient() throws ECFException {
@@ -227,7 +239,7 @@ public class Crud extends JFrame {
         }
     }
 
-    private void createProspect() throws ECFException {
+    private void createProspect() throws Exception {
         try {
             GestionProspect.getProspects().add(new Prospect(
                     new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()),
@@ -247,24 +259,46 @@ public class Crud extends JFrame {
     }
 
     private void deleteClient(Client client) throws ECFException {
-        try{
-            GestionClient.getClients().remove(client);
-            JOptionPane.showMessageDialog(null, "Ce client a bien été supprimé");
-            dispose();
-            new Accueil().setVisible(true);
-        } catch (ECFException ec) {
-            JOptionPane.showMessageDialog(null, ec.getMessage());
+        int confirmation = JOptionPane.showConfirmDialog(
+                null,
+                "Êtes-vous sûr de vouloir supprimer ce client ?",
+                "Confirmation de suppression",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmation == JOptionPane.YES_OPTION) {
+            try {
+                GestionClient.getClients().remove(client);
+                JOptionPane.showMessageDialog(null, "Ce client a bien été supprimé");
+                dispose();
+                new Accueil().setVisible(true);
+            } catch (ECFException ec) {
+                JOptionPane.showMessageDialog(null, ec.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Suppression annulée.");
         }
     }
 
     private void deleteProspect(Prospect prospect) throws ECFException {
-        try{
-            GestionProspect.getProspects().remove(prospect);
-            JOptionPane.showMessageDialog(null, "Ce prospect a bien été supprimé");
-            dispose();
-            new Accueil().setVisible(true);
-        } catch (ECFException ec) {
-            JOptionPane.showMessageDialog(null, ec.getMessage());
+        int confirmation = JOptionPane.showConfirmDialog(
+                null,
+                "Êtes-vous sûr de vouloir supprimer ce prospect ?",
+                "Confirmation de suppression",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmation == JOptionPane.YES_OPTION) {
+            try {
+                GestionProspect.getProspects().remove(prospect);
+                JOptionPane.showMessageDialog(null, "Ce prospect a bien été supprimé");
+                dispose();
+                new Accueil().setVisible(true);
+            } catch (ECFException ec) {
+                JOptionPane.showMessageDialog(null, ec.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Suppression annulée.");
         }
     }
 

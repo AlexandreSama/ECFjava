@@ -45,7 +45,7 @@ public class Main {
                 new Adresse("75001", "rue des Lilas", "10", "Paris"),
                 "client1@mail.com",
                 "Commentaire client 1",
-                "Client A",
+                "Woods Associates",
                 "0102030405",
                 500000,
                 50
@@ -55,7 +55,7 @@ public class Main {
                 new Adresse("69002", "avenue des Champs", "20", "Lyon"),
                 "client2@mail.com",
                 "Commentaire client 2",
-                "Client B",
+                "IBM",
                 "0102030406",
                 300000,
                 30
@@ -65,7 +65,7 @@ public class Main {
                 new Adresse("75009", "boulevard Haussmann", "5", "Paris"),
                 "client3@mail.com",
                 "Commentaire client 3",
-                "Client C",
+                "Swifty Corp",
                 "0102030407",
                 700000,
                 70
@@ -79,7 +79,7 @@ public class Main {
                 "Prospect X",
                 "0102030408",
                 LocalDate.of(2023, 1, 15),
-                "Oui"
+                "OUI"
         ));
 
         GestionProspect.getProspects().add(new Prospect(
@@ -89,7 +89,7 @@ public class Main {
                 "Prospect Y",
                 "0102030409",
                 LocalDate.of(2022, 7, 10),
-                "Non"
+                "NON"
         ));
 
         GestionProspect.getProspects().add(new Prospect(
@@ -99,7 +99,7 @@ public class Main {
                 "Prospect Z",
                 "0102030410",
                 LocalDate.of(2023, 5, 20),
-                "Oui"
+                "OUI"
         ));
 
         LOGGER.log(Level.INFO, "Sociétés de test ajoutées : 3 clients, 3 prospects");
