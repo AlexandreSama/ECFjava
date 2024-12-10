@@ -1,5 +1,6 @@
 package fr.djinn.main;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import fr.djinn.main.entities.*;
 import fr.djinn.main.utils.ECFLogger;
 import fr.djinn.main.views.Accueil;
@@ -25,6 +26,7 @@ public class Main {
             initialiserLogger();
             chargerDonnees();
             LOGGER.log(Level.INFO, "Lancement de l'application");
+            FlatIntelliJLaf.setup();
             new Accueil().setVisible(true);
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {

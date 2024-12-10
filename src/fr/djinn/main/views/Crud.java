@@ -90,6 +90,7 @@ public class Crud extends JFrame {
     private void initComponents() {
         setContentPane(contentPane);
         setSize(900, 600);
+        setTitle("ECF Exo : CRUD");
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

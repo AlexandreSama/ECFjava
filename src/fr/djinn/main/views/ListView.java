@@ -42,8 +42,8 @@ public class ListView extends JFrame {
     private void initComponents() {
         setContentPane(contentPane);
         setSize(1380, 600);
+        setTitle("ECF Exo : Liste d'affichage");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 onCancel();

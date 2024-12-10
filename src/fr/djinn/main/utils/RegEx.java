@@ -19,6 +19,11 @@ public class RegEx {
      */
     public static final Pattern PATTERN_TELEPHONE = Pattern.compile("^[0-9]{10}$");
 
+    /*
+    * Expression régulière pour valider les numéros de rues
+     */
+    public static final Pattern PATTERN_NUMERO_DE_RUE = Pattern.compile("^\\d+[a-zA-Z]*$");
+
     /**
      * Expression régulière pour valider les adresses e-mail.
      * Le format attendu est : exemple@domaine.com.

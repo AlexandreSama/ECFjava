@@ -11,7 +11,6 @@ public class ValidationTest {
     /**
      * Teste si une raison sociale unique est imposée lors de la création d'un client.
      * Vérifie que deux clients ne peuvent pas avoir la même raison sociale.
-     *
      * Condition de succès : une exception ECFException est levée si la raison sociale est déjà utilisée.
      */
     @Test
@@ -48,7 +47,6 @@ public class ValidationTest {
     /**
      * Teste si tous les champs obligatoires doivent être remplis lors de la création d'un client.
      * Vérifie que l'absence de champs obligatoires déclenche une exception.
-     *
      * Condition de succès : une exception ECFException est levée si un champ obligatoire est manquant.
      */
     @Test
@@ -69,7 +67,6 @@ public class ValidationTest {
     /**
      * Teste si le chiffre d'affaires minimum requis est respecté lors de la création d'un client.
      * Vérifie que le chiffre d'affaires doit être supérieur à 200.
-     *
      * Condition de succès : une exception ECFException est levée si le chiffre d'affaires est inférieur à 200.
      */
     @Test
@@ -90,7 +87,6 @@ public class ValidationTest {
     /**
      * Teste si le nombre d'employés est strictement positif lors de la création d'un client.
      * Vérifie que la valeur 0 ou négative pour le nombre d'employés n'est pas acceptée.
-     *
      * Condition de succès : une exception ECFException est levée si le nombre d'employés est <= 0.
      */
     @Test
@@ -112,7 +108,6 @@ public class ValidationTest {
     /**
      * Teste si le code postal respecte le format attendu (exactement 5 chiffres).
      * Vérifie qu'un code postal invalide déclenche une exception.
-     *
      * Condition de succès : une exception ECFException est levée si le code postal est invalide.
      */
     @Test
@@ -130,7 +125,6 @@ public class ValidationTest {
     /**
      * Teste si le numéro de téléphone respecte le format attendu.
      * Vérifie qu'un numéro de téléphone invalide déclenche une exception.
-     *
      * Condition de succès : une exception ECFException est levée si le numéro de téléphone est invalide.
      */
     @Test
@@ -151,7 +145,6 @@ public class ValidationTest {
     /**
      * Teste si l'adresse e-mail respecte le format attendu.
      * Vérifie qu'une adresse e-mail invalide déclenche une exception.
-     *
      * Condition de succès : une exception ECFException est levée si l'adresse e-mail est invalide.
      */
     @Test
@@ -172,7 +165,6 @@ public class ValidationTest {
     /**
      * Teste si la date de prospection respecte le format 'jj/MM/aaaa'.
      * Vérifie qu'une date au format incorrect déclenche une exception.
-     *
      * Condition de succès : une exception ECFException est levée si la date est invalide.
      */
     @Test
@@ -193,7 +185,6 @@ public class ValidationTest {
     /**
      * Teste si le statut d'intérêt d'un prospect est valide (doit être 'OUI' ou 'NON').
      * Vérifie que des valeurs autres que 'OUI' ou 'NON' déclenchent une exception.
-     *
      * Condition de succès : une exception ECFException est levée si le statut est invalide.
      */
     @Test

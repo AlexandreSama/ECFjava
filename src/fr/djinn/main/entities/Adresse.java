@@ -90,7 +90,11 @@ public class Adresse {
      */
     public void setNumeroDeRue(String numeroDeRue) throws ECFException {
         validateNonEmptyField(numeroDeRue, "Numéro de rue invalide.");
-        this.numeroDeRue = numeroDeRue;
+        if(!RegEx.PATTERN_NUMERO_DE_RUE.matcher(numeroDeRue).matches()) {
+            logValidationError("Numero de rue invalide : " + numeroDeRue);
+        }else{
+            this.numeroDeRue = numeroDeRue;
+        }
     }
 
     /**
