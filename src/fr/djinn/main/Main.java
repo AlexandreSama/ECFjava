@@ -24,15 +24,17 @@ public class Main {
         try {
             initialiserLogger();
             chargerDonnees();
+            LOGGER.log(Level.INFO, "Lancement de l'application");
             new Accueil().setVisible(true);
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     sauvegarderDonnees();
                 } catch (IOException e) {
-                    System.err.println("Erreur lors de la sauvegarde des données : " + e.getMessage());
+                    LOGGER.log(Level.SEVERE, "Erreur lors de la sauvegarde des données ! " + e.getMessage());
                 }
             }));
+            LOGGER.log(Level.INFO, "Fermeture de l'application");
         } catch (Exception e) {
             gererErreurCritique(e);
         }
