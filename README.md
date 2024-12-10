@@ -8,7 +8,7 @@ Juste a git clone le projet et l'ouvrir dans votre meilleur IDE
 
 ## Utilisation
 
-Actuellement, l'application est capable de :
+Actuellement, l'utilisateur est capable de :
 
 - Créer, Modifier et Supprimer un Client ou un Prospect avec leurs propres propriétés
 - Afficher dans une table la liste des Clients ou des Prospects
