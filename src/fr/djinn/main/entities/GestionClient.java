@@ -14,9 +14,21 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * Classe de gestion des clients.
+ * Permet la manipulation, la sauvegarde, le chargement et le tri des clients.
+ * Les données des clients sont stockées dans un fichier JSON.
+ */
 public class GestionClient {
 
+    /**
+     * Liste interne des clients. Modifiable.
+     */
     private static final List<Client> clients = new ArrayList<>();
+
+    /**
+     * Chemin vers le fichier JSON de sauvegarde des clients.
+     */
     private static final String FILE_PATH = "save/clients.json";
 
     /**
@@ -29,7 +41,10 @@ public class GestionClient {
     }
 
     /**
-     * Sauvegarde les clients dans un fichier JSON.
+     * Sauvegarde la liste des clients dans un fichier JSON.
+     * Crée le fichier et le dossier parent si nécessaire.
+     *
+     * @throws IOException En cas d'erreur d'écriture.
      */
     public static void saveClientsToFile() throws IOException {
         JsonUtils.ensureDirectoryExists(FILE_PATH); // Assure l'existence du dossier
@@ -41,7 +56,8 @@ public class GestionClient {
     }
 
     /**
-     * Charge les clients depuis un fichier JSON.
+     * Charge la liste des clients depuis un fichier JSON.
+     * Si le fichier est absent ou vide, initialise une liste vide.
      */
     public static void loadClientsFromFile() {
         File file = new File(FILE_PATH);
@@ -57,10 +73,14 @@ public class GestionClient {
             clients.addAll(loadedClients);
             updateCompteurIdentifiant(); // Mise à jour du compteur
         } catch (IOException e) {
-            LOGGER.log(Level.INFO,"Erreur lors du chargement des clients : " + e.getMessage());
+            LOGGER.log(Level.INFO, "Erreur lors du chargement des clients : " + e.getMessage());
         }
     }
 
+    /**
+     * Met à jour le compteur d'identifiants des clients.
+     * Définit le compteur au maximum des identifiants existants + 1.
+     */
     private static void updateCompteurIdentifiant() {
         if (!clients.isEmpty()) {
             Client.setCompteurIdentifiant(
@@ -70,9 +90,9 @@ public class GestionClient {
     }
 
     /**
-     * Trie les clients par raison sociale.
+     * Trie les clients par raison sociale de manière insensible à la casse.
      *
-     * @return Une liste triée.
+     * @return Une nouvelle liste des clients triés par raison sociale.
      */
     public static List<Client> trierParRaisonSociale() {
         return clients.stream()

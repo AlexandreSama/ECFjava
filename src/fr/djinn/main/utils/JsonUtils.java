@@ -13,16 +13,26 @@ import java.util.logging.Level;
 
 import static fr.djinn.main.utils.ECFLogger.LOGGER;
 
+/**
+ * Utilitaire pour la gestion de la sérialisation et désérialisation JSON.
+ * Fournit des méthodes pour écrire et lire des fichiers JSON
+ * avec prise en charge de types personnalisés comme {@link LocalDate}.
+ */
 public class JsonUtils {
 
+    /**
+     * Instance de {@link Gson} configurée pour inclure le formatage JSON
+     * et l'adaptateur pour {@link LocalDate}.
+     */
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .registerTypeAdapter(LocalDate.class, new LocalDateAdapter()) // Enregistrement du TypeAdapter
             .create();
+
     /**
      * Sérialise un objet en JSON et l'écrit dans un fichier.
      *
-     * @param object L'objet à sérialiser.
+     * @param object   L'objet à sérialiser.
      * @param filePath Le chemin du fichier où écrire le JSON.
      * @throws IOException En cas d'erreur d'écriture.
      */
@@ -37,8 +47,8 @@ public class JsonUtils {
      * Désérialise un fichier JSON en un objet Java.
      *
      * @param filePath Le chemin du fichier JSON.
-     * @param type Le type de l'objet à désérialiser.
-     * @param <T> Le type générique.
+     * @param type     Le type de l'objet à désérialiser (ex. via {@code TypeToken}).
+     * @param <T>      Le type générique de l'objet attendu.
      * @return L'objet désérialisé.
      * @throws IOException En cas d'erreur de lecture.
      */
@@ -48,13 +58,19 @@ public class JsonUtils {
         }
     }
 
+    /**
+     * Vérifie si le dossier contenant le fichier spécifié existe et le crée si nécessaire.
+     *
+     * @param filePath Le chemin complet du fichier (incluant le dossier parent).
+     * @throws RuntimeException Si la création du dossier échoue.
+     */
     public static void ensureDirectoryExists(String filePath) {
         File file = new File(filePath);
         File directory = file.getParentFile(); // Récupère le dossier parent
 
         if (directory != null && !directory.exists()) {
             if (directory.mkdirs()) {
-                LOGGER.log(Level.INFO,"Dossier créé : " + directory.getAbsolutePath());
+                LOGGER.log(Level.INFO, "Dossier créé : " + directory.getAbsolutePath());
             } else {
                 throw new RuntimeException("Échec de la création du dossier : " + directory.getAbsolutePath());
             }

@@ -105,6 +105,10 @@ public class Prospect extends Societe {
         return compteurIdentifiant;
     }
 
+    /**
+     * Méthode au cas ou on veut set un identifiant a l'objet
+     * @param value l'identifiant en question
+     */
     public static void setCompteurIdentifiant(int value) {
         compteurIdentifiant = value;
     }

@@ -1,6 +1,6 @@
 package fr.djinn.main;
 
-import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import fr.djinn.main.entities.*;
 import fr.djinn.main.utils.ECFLogger;
 import fr.djinn.main.views.Accueil;
@@ -20,13 +20,13 @@ public class Main {
      *
      * @param args Arguments de ligne de commande (non utilisés).
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         try {
             initialiserLogger();
             chargerDonnees();
             LOGGER.log(Level.INFO, "Lancement de l'application");
-            FlatIntelliJLaf.setup();
+            FlatDarkLaf.setup();
             new Accueil().setVisible(true);
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -39,6 +39,7 @@ public class Main {
             LOGGER.log(Level.INFO, "Fermeture de l'application");
         } catch (Exception e) {
             gererErreurCritique(e);
+            sauvegarderDonnees();
         }
     }
 

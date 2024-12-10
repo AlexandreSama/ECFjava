@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+/**
+ * Classe personnalisée pour formater les enregistrements de log dans un style lisible et organisé.
+ * Le format inclut la date, l'heure, le niveau de log, le message, la classe source et la méthode source.
+ */
 public class LoggerFormat extends Formatter {
 
     /**

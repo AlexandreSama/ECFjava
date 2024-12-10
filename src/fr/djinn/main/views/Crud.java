@@ -375,10 +375,18 @@ public class Crud extends JFrame {
         LOGGER.severe("Erreur : " + e.getMessage());
     }
 
+    /**
+     * Méthode pour envoyer le titre en cas de suppression
+     * @return le titre en fonction de si c'est un client ou un prospect
+     */
     private String getDeleteTitle() {
         return entityType == EntityType.CLIENT ? "Supprimer ce client ?" : "Supprimer ce prospect ?";
     }
 
+    /**
+     * Méthode pour envoyer le titre en cas de modification
+     * @return le titre en fonction de si c'est un client ou un prospect
+     */
     private String getUpdateTitle() {
         return entityType == EntityType.CLIENT ? "Modifier ce client ?" : "Modifier ce prospect ?";
     }

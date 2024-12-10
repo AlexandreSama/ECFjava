@@ -15,9 +15,21 @@ import java.util.stream.Collectors;
 
 import static fr.djinn.main.utils.ECFLogger.LOGGER;
 
+/**
+ * Classe de gestion des prospects.
+ * Permet la manipulation, la sauvegarde, le chargement et le tri des prospects.
+ * Les données des prospects sont stockées dans un fichier JSON.
+ */
 public class GestionProspect {
 
+    /**
+     * Liste interne des prospects. Modifiable.
+     */
     private static final List<Prospect> prospects = new ArrayList<>();
+
+    /**
+     * Chemin vers le fichier JSON de sauvegarde des prospects.
+     */
     private static final String FILE_PATH = "save/prospects.json";
 
     /**
@@ -30,7 +42,10 @@ public class GestionProspect {
     }
 
     /**
-     * Sauvegarde les prospects dans un fichier JSON.
+     * Sauvegarde la liste des prospects dans un fichier JSON.
+     * Crée le fichier et le dossier parent si nécessaire.
+     *
+     * @throws IOException En cas d'erreur d'écriture.
      */
     public static void saveProspectsToFile() throws IOException {
         JsonUtils.ensureDirectoryExists(FILE_PATH); // Assure l'existence du dossier
@@ -42,12 +57,13 @@ public class GestionProspect {
     }
 
     /**
-     * Charge les prospects depuis un fichier JSON.
+     * Charge la liste des prospects depuis un fichier JSON.
+     * Si le fichier est absent ou vide, initialise une liste vide.
      */
     public static void loadProspectsFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists() || file.length() == 0) {
-            LOGGER.log(Level.INFO,"Aucun fichier de prospects trouvé ou fichier vide. Liste initialisée vide.");
+            LOGGER.log(Level.INFO, "Aucun fichier de prospects trouvé ou fichier vide. Liste initialisée vide.");
             return;
         }
 
@@ -62,6 +78,10 @@ public class GestionProspect {
         }
     }
 
+    /**
+     * Met à jour le compteur d'identifiants des prospects.
+     * Définit le compteur au maximum des identifiants existants + 1.
+     */
     private static void updateCompteurIdentifiant() {
         if (!prospects.isEmpty()) {
             Prospect.setCompteurIdentifiant(
@@ -71,9 +91,9 @@ public class GestionProspect {
     }
 
     /**
-     * Trie les prospects par raison sociale.
+     * Trie les prospects par raison sociale de manière insensible à la casse.
      *
-     * @return Une liste triée.
+     * @return Une nouvelle liste des prospects triés par raison sociale.
      */
     public static List<Prospect> trierParRaisonSociale() {
         return prospects.stream()
