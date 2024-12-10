@@ -85,6 +85,14 @@ public class Client extends Societe {
         return compteurIdentifiant++;
     }
 
+    /**
+     * Affiche le prochain identifiant pour un client
+     * @preturn Prochain identifiant
+     */
+    public static int generateNextIdentifiant() {
+        return compteurIdentifiant;
+    }
+
     public static void setCompteurIdentifiant(int value) {
         compteurIdentifiant = value;
     }

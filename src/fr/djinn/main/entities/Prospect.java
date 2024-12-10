@@ -97,6 +97,14 @@ public class Prospect extends Societe {
         return compteurIdentifiant++;
     }
 
+    /**
+     * Affiche le prochain identifiant pour un prospect
+     * @preturn Prochain identifiant
+     */
+    public static int generateNextIdentifiant() {
+        return compteurIdentifiant;
+    }
+
     public static void setCompteurIdentifiant(int value) {
         compteurIdentifiant = value;
     }
