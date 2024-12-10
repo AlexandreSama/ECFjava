@@ -6,7 +6,6 @@ import fr.djinn.main.entities.GestionProspect;
 import fr.djinn.main.entities.Prospect;
 import fr.djinn.main.utils.ActionType;
 import fr.djinn.main.utils.EntityType;
-import static fr.djinn.main.utils.ECFLogger.LOGGER;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -110,7 +109,6 @@ public class Accueil extends JFrame {
         updateCrudPanelTexts(type == EntityType.CLIENT ? "client" : "prospect", pluralLabel);
         crudPanel.setVisible(true);
         retourButton.setVisible(true);
-        LOGGER.info("Entité sélectionnée : " + type.name());
     }
 
     /**
@@ -125,7 +123,6 @@ public class Accueil extends JFrame {
         populateComboBox(entityType);
         choosePanel.setVisible(true);
         retourButton.setVisible(true);
-        LOGGER.info("Action sélectionnée : " + action.name());
     }
 
     /**
@@ -153,8 +150,6 @@ public class Accueil extends JFrame {
                 selectSocieteComboBox.addItem(((Prospect) entity).getRaisonSociale());
             }
         });
-
-        LOGGER.info("ComboBox peuplée avec les " + type.name().toLowerCase() + ".");
     }
 
     /**

@@ -4,7 +4,6 @@ import fr.djinn.main.entities.Client;
 import fr.djinn.main.entities.GestionClient;
 import fr.djinn.main.entities.GestionProspect;
 import fr.djinn.main.entities.Prospect;
-import static fr.djinn.main.utils.ECFLogger.LOGGER;
 import fr.djinn.main.utils.EntityType;
 import fr.djinn.main.utils.RegEx;
 
@@ -13,7 +12,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Classe graphique permettant d'afficher une liste de clients ou de prospects
@@ -95,11 +93,10 @@ public class ListView extends JFrame {
                 return column != 0;
             }
         };
+
         tableModel.addRow(headers);
         entities.forEach(entity -> tableModel.addRow(entityToRow(entity, entityType)));
         listTable.setModel(tableModel);
-
-        LOGGER.info("Table peuplée avec les données des " + entityType.name().toLowerCase() + "s.");
 
         listTable.getModel().addTableModelListener(e -> {
             if (e.getType() == TableModelEvent.UPDATE) {
@@ -147,7 +144,6 @@ public class ListView extends JFrame {
                                 client.setNbrEmploye(Integer.parseInt(newValue.toString()));
                                 break;
                         }
-                        LOGGER.log(Level.INFO,"Client mis à jour : " + client);
                     }
                 } else if (entityType == EntityType.PROSPECT) {
                     Prospect prospect = GestionProspect.getProspects().stream()
@@ -185,7 +181,6 @@ public class ListView extends JFrame {
                                 prospect.setEstInteresse(newValue.toString());
                                 break;
                         }
-                        LOGGER.log(Level.INFO,"Prospect mis à jour : " + prospect);
                     }
                 }
             }

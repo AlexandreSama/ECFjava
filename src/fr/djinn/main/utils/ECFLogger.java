@@ -15,7 +15,8 @@ public class ECFLogger {
 
     /**
      * Initialise le logger avec un gestionnaire de fichier.
-     * Les logs seront écrits dans un fichier nommé `debug.log` situé dans un dossier `log`.
+     * Les logs seront écrits dans un fichier nommé `debug.log` situé dans un dossier `log`
+     * qui sera créer s'il ne l'est pas déjà.
      * @throws IOException si le fichier ou le dossier ne peuvent pas être créés ou accédés.
      */
     public void initFileLogger() throws IOException {

@@ -266,11 +266,9 @@ public class Crud extends JFrame {
             if (confirmation == JOptionPane.YES_OPTION) {
                 if (entityType == EntityType.CLIENT) {
                     GestionClient.getClients().remove(client);
-                    LOGGER.info("Client supprimé : " + client.getRaisonSociale());
                     JOptionPane.showMessageDialog(this, "Client supprimé avec succès !");
                 } else {
                     GestionProspect.getProspects().remove(prospect);
-                    LOGGER.info("Prospect supprimé : " + prospect.getRaisonSociale());
                     JOptionPane.showMessageDialog(this, "Prospect supprimé avec succès !");
                 }
 
@@ -279,7 +277,6 @@ public class Crud extends JFrame {
                 new Accueil().setVisible(true);
             } else {
                 // Si l'utilisateur annule la suppression
-                LOGGER.info("Suppression annulée par l'utilisateur.");
                 JOptionPane.showMessageDialog(this, "Suppression annulée.");
                 dispose();
                 new Accueil().setVisible(true);
@@ -299,13 +296,11 @@ public class Crud extends JFrame {
             if (entityType == EntityType.CLIENT) {
                 updateClientFields(client);
                 JOptionPane.showMessageDialog(this, "Client mis à jour avec succès !");
-                LOGGER.info("Client mis à jour : " + (client != null ? client.getRaisonSociale() : prospect.getRaisonSociale()));
                 dispose();
                 new Accueil().setVisible(true);
             } else {
                 updateProspectFields(prospect);
                 JOptionPane.showMessageDialog(this, "Prospect mis à jour avec succès !");
-                LOGGER.info("Prospect mis à jour : " + (client != null ? client.getRaisonSociale() : prospect.getRaisonSociale()));
                 dispose();
                 new Accueil().setVisible(true);
             }
