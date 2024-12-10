@@ -39,7 +39,11 @@ public class Main {
             LOGGER.log(Level.INFO, "Fermeture de l'application");
         } catch (Exception e) {
             gererErreurCritique(e);
-            sauvegarderDonnees();
+            try{
+                sauvegarderDonnees();
+            } catch (IOException ioException){
+                gererErreurCritique(e);
+            }
         }
     }
 
