@@ -1,5 +1,6 @@
 package fr.djinn.main.views;
 
+import fr.djinn.main.Main;
 import fr.djinn.main.entities.*;
 import fr.djinn.main.utils.ActionType;
 import fr.djinn.main.utils.EntityType;
@@ -89,6 +90,8 @@ public class Crud extends JFrame {
         setContentPane(contentPane);
         setSize(900, 600);
         setTitle("ECF Exo : CRUD");
+        ImageIcon img = new ImageIcon(Main.class.getResource("/images/logo.jpg"));
+        setIconImage(img.getImage());
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
