@@ -57,7 +57,6 @@ class AdresseTest {
     void testSetNumeroDeRueInvalide() {
         Adresse adresse = new Adresse("75001", "Rue de Rivoli", "12", "Paris");
         assertDoesNotThrow(() -> adresse.setNumeroDeRue("B45"));
-        // Vérifiez selon vos exigences spécifiques si un log ou un message est attendu
     }
 
     @Test
