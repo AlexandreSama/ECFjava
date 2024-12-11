@@ -13,6 +13,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Classe graphique permettant d'afficher une liste de clients ou de prospects
@@ -44,7 +45,7 @@ public class ListView extends JFrame {
         setContentPane(contentPane);
         setSize(1380, 600);
         setTitle("ECF Exo : Liste d'affichage");
-        ImageIcon img = new ImageIcon(Main.class.getResource("/images/logo.jpg"));
+        ImageIcon img = new ImageIcon(Objects.requireNonNull(Main.class.getResource("/images/logo.jpg")));
         setIconImage(img.getImage());
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

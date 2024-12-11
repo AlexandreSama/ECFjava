@@ -66,7 +66,7 @@ public class GestionClient {
             return;
         }
 
-        try (FileReader reader = new FileReader(file)) {
+        try (FileReader ignored = new FileReader(file)) {
             Type listType = new TypeToken<List<Client>>() {}.getType();
             List<Client> loadedClients = JsonUtils.readFromJsonFile(FILE_PATH, listType);
             clients.clear();

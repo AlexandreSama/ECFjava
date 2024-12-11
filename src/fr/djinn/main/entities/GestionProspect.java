@@ -67,7 +67,7 @@ public class GestionProspect {
             return;
         }
 
-        try (FileReader reader = new FileReader(file)) {
+        try (FileReader ignored = new FileReader(file)) {
             Type listType = new TypeToken<List<Prospect>>() {}.getType();
             List<Prospect> loadedProspects = JsonUtils.readFromJsonFile(FILE_PATH, listType);
             prospects.clear();

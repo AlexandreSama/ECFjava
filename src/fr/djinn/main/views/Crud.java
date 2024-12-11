@@ -90,7 +90,7 @@ public class Crud extends JFrame {
         setContentPane(contentPane);
         setSize(900, 600);
         setTitle("ECF Exo : CRUD");
-        ImageIcon img = new ImageIcon(Main.class.getResource("/images/logo.jpg"));
+        ImageIcon img = new ImageIcon(Objects.requireNonNull(Main.class.getResource("/images/logo.jpg")));
         setIconImage(img.getImage());
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -365,7 +365,7 @@ public class Crud extends JFrame {
         prospect.setTelephone(telephoneField.getText());
         prospect.setAdresseMail(emailField.getText());
         prospect.setDateProspection(dateProspectionField.getText());
-        prospect.setEstInteresse(isInterestedComboBox.getSelectedItem().toString());
+        prospect.setEstInteresse(Objects.requireNonNull(isInterestedComboBox.getSelectedItem()).toString());
         prospect.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
     }
 
