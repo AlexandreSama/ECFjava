@@ -362,7 +362,7 @@ public class Crud extends JFrame {
         prospect.setTelephone(telephoneField.getText());
         prospect.setAdresseMail(emailField.getText());
         prospect.setDateProspection(dateProspectionField.getText());
-        prospect.setEstInteresse(Objects.requireNonNull(isInterestedComboBox.getSelectedItem()).toString());
+        prospect.setEstInteresse(isInterestedComboBox.getSelectedItem().toString());
         prospect.setAdresse(new Adresse(codePostalField.getText(), nomDeRueField.getText(), numeroDeRueField.getText(), villeField.getText()));
     }
 
