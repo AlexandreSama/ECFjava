@@ -1,5 +1,6 @@
 package fr.djinn.main.views;
 
+import fr.djinn.main.Main;
 import fr.djinn.main.entities.Client;
 import fr.djinn.main.entities.GestionClient;
 import fr.djinn.main.entities.GestionProspect;
@@ -43,6 +44,9 @@ public class ListView extends JFrame {
         setContentPane(contentPane);
         setSize(1380, 600);
         setTitle("ECF Exo : Liste d'affichage");
+        ImageIcon img = new ImageIcon(Main.class.getResource("/images/logo.jpg"));
+        setIconImage(img.getImage());
+
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {

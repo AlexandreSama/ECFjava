@@ -1,5 +1,6 @@
 package fr.djinn.main.views;
 
+import fr.djinn.main.Main;
 import fr.djinn.main.entities.Client;
 import fr.djinn.main.entities.GestionClient;
 import fr.djinn.main.entities.GestionProspect;
@@ -8,6 +9,7 @@ import fr.djinn.main.utils.ActionType;
 import fr.djinn.main.utils.EntityType;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -55,6 +57,8 @@ public class Accueil extends JFrame {
         setContentPane(contentPane);
         setSize(900, 600);
         setTitle("ECF Exo : Accueil");
+        ImageIcon img = new ImageIcon(Main.class.getResource("/images/logo.jpg"));
+        setIconImage(img.getImage());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         addWindowListener(new WindowAdapter() {
